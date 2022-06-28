@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
 import { useLocation } from 'react-router-dom'
 import './hotel.css'
@@ -13,6 +13,7 @@ import {
   faCircleArrowLeft,
   faCircleArrowRight
 } from '@fortawesome/free-solid-svg-icons'
+import { SearchContext } from '../../context/SearchContext'
 
 
 const Hotel = () => {
@@ -23,7 +24,16 @@ const Hotel = () => {
 
   const { data, loading, error } = useFetch(`/hotels/find/${id}`)
 
-  // console.log(data)
+  const {dates, options} = useContext(SearchContext)
+
+  const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
+  function dayDifference(date1, date2) {
+    const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+    const diffDays = Math.ceil(timeDiff / MILLISECONDS_PER_DAY);
+    return diffDays;
+  }
+
+  const days = dayDifference(dates[0].endDate, dates[0].startDate)
 
   // const photos = [
   //   {
@@ -106,11 +116,11 @@ const Hotel = () => {
                 </p>
               </div>
               <div className="hotelDetailsPrice">
-                <h1>Perfect for a 8-night stay!</h1>
+                <h1>Perfect for a {days}-night stay!</h1>
                 <span>
-                  Located in the real heart of Karachi, this property has an excellent location score of 9.6.
+                  Located in the real heart of {data.city}, this property has an excellent location.
                 </span>
-                <h3><b>$400</b> (8 nights)</h3>
+                <h3><b>${days * data.cheapestPrice * options.room}</b> ({days} nights)</h3>
                 <button>Reserve or Book Now</button>
               </div>
             </div>
