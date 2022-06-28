@@ -29,6 +29,12 @@ mongoose.connection.on("disconnected",()=>{
 app.use(cookieParser())
 app.use(express.json())
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+    });
+
 app.use("/api/auth",authRoute);
 app.use("/api/users",usersRoute);
 app.use("/api/rooms",roomsRoute);
