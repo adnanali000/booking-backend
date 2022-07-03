@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
-import { useLocation } from 'react-router-dom'
+import { useLocation , useNavigate } from 'react-router-dom'
 import './hotel.css'
 import Navbar from '../../components/navbar/Navbar'
 import Header from '../../components/header/Header'
@@ -14,11 +14,15 @@ import {
   faCircleArrowRight
 } from '@fortawesome/free-solid-svg-icons'
 import { SearchContext } from '../../context/SearchContext'
+import { AuthContext } from '../../context/AuthContext'
+import Reserve from '../../components/reserve/Reserve'
+
 
 
 const Hotel = () => {
   const [slideNumber, setSlideNumber] = useState(0);
   const [open, setOpen] = useState(false)
+  const [openBookModal,setOpenBookModal] = useState(false);
   const location = useLocation();
   const id = location.pathname.split("/")[2];
 
@@ -26,13 +30,15 @@ const Hotel = () => {
 
   const {dates, options} = useContext(SearchContext)
 
+  const {user} = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
   function dayDifference(date1, date2) {
     const timeDiff = Math.abs(date2.getTime() - date1.getTime());
     const diffDays = Math.ceil(timeDiff / MILLISECONDS_PER_DAY);
     return diffDays;
   }
-
   const days = dayDifference(dates[0].endDate, dates[0].startDate)
 
   // const photos = [
@@ -72,6 +78,14 @@ const Hotel = () => {
 
     setSlideNumber(newSliderNumber)
 
+  }
+
+  const handleClick = ()=>{
+    if(user){
+      setOpenBookModal(true)
+    }else{
+      navigate("/login")
+    }
   }
 
   return (
@@ -121,7 +135,7 @@ const Hotel = () => {
                   Located in the real heart of {data.city}, this property has an excellent location.
                 </span>
                 <h3><b>${days * data.cheapestPrice * options.room}</b> ({days} nights)</h3>
-                <button>Reserve or Book Now</button>
+                <button onClick={handleClick}>Reserve or Book Now</button>
               </div>
             </div>
           </div>
@@ -129,6 +143,8 @@ const Hotel = () => {
           <Footer />
         </div>
       )}
+
+      {openBookModal && <Reserve setOpen = {setOpenBookModal} hotelId={id} />}
     </div>
   )
 }
