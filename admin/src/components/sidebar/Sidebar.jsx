@@ -11,7 +11,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import InsertChartIcon from '@mui/icons-material/InsertChart';
-import { Link } from 'react-router-dom'
+import { Link,useNavigate } from 'react-router-dom'
 import { useContext } from 'react';
 import { DarkModeContext } from '../../context/darkModeContext'
 import { AuthContext } from '../../context/AuthContext'
@@ -19,12 +19,12 @@ import { AuthContext } from '../../context/AuthContext'
 const Sidebar = () => {
 
   const { dispatch } = useContext(DarkModeContext)
+  const navigate = useNavigate();
 
-
-  // const handleLogout = ()=>{
-  //   dispatch({type:"LOGOUT"})
-  //   navigate("/login")      
-  // }
+  const handleLogout = ()=>{
+    dispatch({type:"LOGOUT"})
+    navigate("/login")      
+  }
 
 
   return (
@@ -97,7 +97,7 @@ const Sidebar = () => {
           </li>
           <li>
             <ExitToAppIcon className="icon" />
-            <span>Logout</span>
+            <span onClick={handleLogout}>Logout</span>
           </li>
         </ul>
       </div>
